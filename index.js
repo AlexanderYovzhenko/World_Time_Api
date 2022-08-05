@@ -8,12 +8,12 @@ async function queryTimeApi (site) {
 };
 
 setInterval(() => {
-  try {
-    queryTimeApi(site).then(data => {
+  queryTimeApi(site)
+    .then(data => {
       body.innerText = data;
+    })
+    .catch(err => {
+      body.innerText = err;
+      console.error(err);
     });
-  } catch (err) {
-    body.innerText = JSON.stringify(err);
-    console.error(err);
-  }
 }, interval);
