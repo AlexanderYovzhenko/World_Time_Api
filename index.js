@@ -1,19 +1,29 @@
-const body = document.querySelector('body');
+import http from 'http';
 
-const site = 'http://worldtimeapi.org/api/timezone/Asia/Ho_Chi_Minh';
+const host = 'worldtimeapi.org';
+const path = '/api/timezone/Asia/Ho_Chi_Minh';
 const interval = 1000;
 
-function queryTimeApi (site) {
-  setInterval(async () => {
-    try {
-      const response = await fetch(site);
-      const data = await response.text();
-      body.innerText = data;
-    } catch (error) {
-      body.innerText = error;
-      console.error(error);
-    }
-  }, interval);
+const options = {
+  method: 'GET',
+  host: host,
+  path: path
 };
 
-queryTimeApi(site);
+const callback = (response) => {
+  let answer = '';
+  response.on('data', (chunk) => {
+    answer += chunk.toString();
+  });
+
+  response.on('end', () => {
+    console.log(answer, '\n__________________\n');
+  });
+};
+
+setInterval(() => {
+  const request = http.request(options, callback).end();
+  request.on('error', (err) => {
+    console.error(err);
+  });
+}, interval);
